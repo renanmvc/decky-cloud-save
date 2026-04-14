@@ -30,7 +30,48 @@ Find it on the [decky plugin store](https://plugins.deckbrew.xyz/) or download i
 
 ## Development Build
 
-For local development on Steam Deck, `npm run build` now builds the frontend bundle and copies the runtime files directly into `~/homebrew/plugins/decky-cloud-save/`.
+For local development on Steam Deck, `npm run build` builds the frontend bundle and copies the runtime files directly into `~/homebrew/plugins/decky-cloud-save/`.
+
+On the first local build, the script also ensures `bin/rclone` exists in the installed plugin directory. If it is missing, it downloads the configured rclone release automatically.
+
+### Step-by-step from GitHub (Steam Deck)
+
+1. Clone the repository:
+
+   ```bash
+   cd ~/Downloads
+   git clone https://github.com/renanmvc/decky-cloud-save.git
+   cd decky-cloud-save
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Build and copy plugin files to Decky plugin directory:
+
+   ```bash
+   npm run build
+   ```
+
+4. Restart Steam or Decky Loader.
+
+5. Open Decky Cloud Save and complete initial setup:
+   - Select a cloud provider and authenticate.
+   - Add one or more sync paths.
+   - Run "Sync Now" once to validate the configuration.
+
+6. Validate autosync:
+   - Enable autosync in plugin settings.
+   - Open a game from the configured sync path.
+   - Close the game and check plugin logs for a new sync run.
+
+Notes:
+- If `plugin.json` or other files in `~/homebrew/plugins/decky-cloud-save/` are not writable, fix permissions once and run build again.
+- If `bin/rclone` is missing, it is downloaded automatically during build.
+- The build script is at `.vscode/build.sh` and can be reused in local automation.
 
 
 ## Usage
