@@ -56,7 +56,11 @@ On the first local build, the script also ensures `bin/rclone` exists in the ins
    npm run build
    ```
 
-4. Restart Steam or Decky Loader.
+4. Restart Decky Loader:
+
+   ```bash
+   sudo systemctl restart plugin_loader.service
+   ```
 
 5. Open Decky Cloud Save and complete initial setup:
    - Select a cloud provider and authenticate.
@@ -69,7 +73,12 @@ On the first local build, the script also ensures `bin/rclone` exists in the ins
    - Close the game and check plugin logs for a new sync run.
 
 Notes:
-- If `plugin.json` or other files in `~/homebrew/plugins/decky-cloud-save/` are not writable, fix permissions once and run build again.
+- If `plugin.json` or other files in `~/homebrew/plugins/decky-cloud-save/` are not writable, fix permissions once and run build again:
+
+   ```bash
+   sudo chown -R deck:deck ~/homebrew/plugins/decky-cloud-save
+   sudo chmod -R u+rwX,go+rX ~/homebrew/plugins/decky-cloud-save
+   ```
 - If `bin/rclone` is missing, it is downloaded automatically during build.
 - The build script is at `.vscode/build.sh` and can be reused in local automation.
 
