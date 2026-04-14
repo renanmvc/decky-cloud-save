@@ -36,6 +36,20 @@ On the first local build, the script also ensures `bin/rclone` exists in the ins
 
 ### Step-by-step from GitHub (Steam Deck)
 
+0. If `npm` is not available on SteamOS, repair pacman keys and install `npm`/`pnpm` first:
+
+   ```bash
+   sudo pacman-key --init
+   sudo pacman-key --populate archlinux
+
+   sudo sed -i 's/SigLevel = .*/SigLevel = Never/' /etc/pacman.conf
+   sudo pacman -S rsync
+   sudo sed -i 's/SigLevel = .*/SigLevel = Required DatabaseOptional/' /etc/pacman.conf
+
+   sudo pacman -S npm
+   sudo pacman -S pnpm
+   ```
+
 1. Clone the repository:
 
    ```bash
