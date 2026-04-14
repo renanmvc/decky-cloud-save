@@ -41,6 +41,8 @@ __pycache__/
 yalc.lock
 
 .vscode/settings.json
+.vscode/*.local
+.vscode/*.code-workspace
 
 # Ignore output folder
 
@@ -54,3 +56,6 @@ cli/*
 cli/decky
 
 backend/rclone-*
+*.pyc
+.pytest_cache/
+.mypy_cache/
