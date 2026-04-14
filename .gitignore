@@ -1,0 +1,56 @@
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.swp
+
+pids
+logs
+results
+tmp
+
+# Coverage reports
+coverage
+
+# API keys and secrets
+.env
+
+# Dependency directory
+node_modules
+bower_components
+.pnpm-store
+
+# Editors
+.idea
+*.iml
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Ignore built ts files
+dist/
+
+__pycache__/
+
+/.yalc
+yalc.lock
+
+.vscode/settings.json
+
+# Ignore output folder
+
+backend/out
+
+# Ignore decky CLI for building plugins
+out
+out/*
+cli/
+cli/*
+cli/decky
+
+backend/rclone-*

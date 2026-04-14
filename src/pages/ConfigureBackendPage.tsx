@@ -1,0 +1,112 @@
+import { ButtonItem, ConfirmModal, Navigation, PanelSection, PanelSectionRow, showModal, sleep } from "decky-frontend-lib";
+import { useEffect, useState } from "react";
+import { ImOnedrive, ImDropbox, ImHome, ImGoogleDrive } from "react-icons/im";
+import { BsGearFill, BsPatchQuestionFill } from "react-icons/bs";
+import Container from "../components/Container";
+import { PageProps } from "../helpers/types";
+import { ApiClient } from "../helpers/apiClient";
+import { Translator } from "../helpers/translator"
+import { Logger } from "../helpers/logger";
+import { Toast } from "../helpers/toast";
+
+export default function ConfigureBackendPage({ serverApi }: PageProps<{}>) {
+  const [isConfiguring, setIsConfiguring] = useState(false);
+
+  const openConfig = async (backend: "onedrive" | "drive" | "dropbox") => {
+    if (isConfiguring) {
+      return;
+    }
+
+    setIsConfiguring(true);
+    try {
+      const response = await serverApi.callPluginMethod<{ backend_type: "onedrive" | "drive" | "dropbox" }, string>("spawn", { backend_type: backend });
+      if (response.success && response.result) {
+        // Process hack to make sure successful subprocess exit.
+        (async () => {
+          let count = 0; // For timeout in case user forgor 💀
+          while (count < 10_000 /* approx 1h */) {
+            const res = await serverApi.callPluginMethod<{}, number | undefined>("spawn_probe", {});
+
+            if (res.success && res.result === 0) {
+              Navigation.NavigateBack();
+              break;
+            }
+
+            count += 1;
+            await sleep(360);
+          }
+        })();
+
+        Navigation.CloseSideMenus();
+        Navigation.NavigateToExternalWeb(response.result);
+      } else {
+        Logger.error(response);
+        Toast.toast(response.result || "Failed to start cloud provider setup. Check plugin logs.", 5000);
+      }
+    } catch (error) {
+      Logger.error(error);
+      Toast.toast("Failed to start cloud provider setup. Check plugin logs.", 5000);
+    } finally {
+      setIsConfiguring(false);
+    }
+  };
+
+  const [provider, setProvider] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    ApiClient.getCloudBackend().then((e) => setProvider(e ?? "N/A"));
+  }, []);
+
+  return (
+    <Container title={Translator.translate("configure.provider")}>
+      <PanelSection>
+        <strong>{Translator.translate("currently.using")}: {provider}</strong>
+      </PanelSection>
+      <PanelSection>
+        <small>{Translator.translate("click.providers")}</small>
+        <PanelSectionRow>
+          <ButtonItem disabled={isConfiguring} onClick={() => openConfig("onedrive")} icon={<ImOnedrive />} label="OneDrive">
+            <BsGearFill />
+          </ButtonItem>
+        </PanelSectionRow>
+        <PanelSectionRow>
+          <ButtonItem
+            disabled={isConfiguring}
+            onClick={() => openConfig("drive")}
+            icon={<ImGoogleDrive />}
+            label="Google Drive (may not work if Google does not trust the Steam Browser)"
+          >
+            <BsGearFill />
+          </ButtonItem>
+        </PanelSectionRow>
+        <PanelSectionRow>
+          <ButtonItem disabled={isConfiguring} onClick={() => openConfig("dropbox")} icon={<ImDropbox />} label="Dropbox">
+            <BsGearFill />
+          </ButtonItem>
+        </PanelSectionRow>
+        <PanelSectionRow>
+          <ButtonItem
+            onClick={() =>
+              showModal(
+                <ConfirmModal
+                  strTitle={Translator.translate("other.providers")}
+                  strDescription={
+                    <span style={{ whiteSpace: "pre-wrap" }}>
+                      {
+                        Translator.translate("manually.desktop")
+                      }
+                    </span>
+                  }
+                />
+              )
+            }
+            icon={<ImHome />}
+            label={Translator.translate("other.advanced")}
+          >
+            <BsPatchQuestionFill />
+          </ButtonItem>
+        </PanelSectionRow>
+      </PanelSection>
+    </Container>
+  );
+}
