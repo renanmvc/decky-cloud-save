@@ -21,12 +21,13 @@ copy_file_if_writable() {
 	elif [ ! -e "${dest}" ]; then
 		install -m 0644 "${src}" "${dest}"
 	else
-		echo "Skipping ${dest}: destination is not writable"
+		echo "Skipping ${dest}: destination is not writable (run: sudo chown -R deck:deck ${PLUGIN_DIR} && sudo chmod -R u+rwX,go+rX ${PLUGIN_DIR})"
 	fi
 }
 
 copy_file_if_writable "${WORKSPACE_DIR}/main.py" "${PLUGIN_DIR}/main.py"
 copy_file_if_writable "${WORKSPACE_DIR}/plugin.json" "${PLUGIN_DIR}/plugin.json"
+copy_file_if_writable "${WORKSPACE_DIR}/package.json" "${PLUGIN_DIR}/package.json"
 copy_file_if_writable "${WORKSPACE_DIR}/deck.json" "${PLUGIN_DIR}/deck.json"
 copy_file_if_writable "${WORKSPACE_DIR}/backend/rcloneLauncher" "${PLUGIN_DIR}/bin/rcloneLauncher"
 
